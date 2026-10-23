@@ -19,6 +19,19 @@ export function createApp() {
   app.disable('x-powered-by');
   app.set('trust proxy', env.TRUST_PROXY);
 
+  // Behind an edge proxy that sets the visitor IP in its own header (Cloudflare on Render), use it
+  // for `req.ip` so the login rate limiter and request logs see real visitors, not proxy nodes.
+  if (env.CLIENT_IP_HEADER) {
+    const header = env.CLIENT_IP_HEADER;
+    app.use((req, _res, next) => {
+      const value = req.headers[header];
+      if (typeof value === 'string' && value) {
+        Object.defineProperty(req, 'ip', { value: value.split(',')[0].trim(), configurable: true });
+      }
+      next();
+    });
+  }
+
   app.use(helmet());
   app.use(cors({ origin: env.clientOrigins, credentials: true }));
   app.use(compression());

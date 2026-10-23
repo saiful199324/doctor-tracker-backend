@@ -16,6 +16,9 @@ const EnvSchema = z.object({
     .trim()
     .default('1')
     .transform((v) => (/^\d+$/.test(v) ? Number(v) : v)),
+  // Header set by a trusted edge proxy that always overwrites it, e.g. "cf-connecting-ip" when the
+  // host sits behind Cloudflare (Render). Only set this where clients cannot reach the API directly.
+  CLIENT_IP_HEADER: z.string().trim().toLowerCase().optional(),
 });
 
 const parsed = EnvSchema.safeParse(process.env);
