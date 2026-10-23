@@ -8,9 +8,14 @@ const EnvSchema = z.object({
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   JWT_EXPIRES_IN: z.string().default('1d'),
   CLIENT_ORIGIN: z.string().default('http://localhost:3000'),
-  // Proxy hops in front of the API, so `req.ip` (used by the login rate limiter) is the visitor's
-  // real IP. 1 = Next.js on the same machine / ngrok; 2 = Vercel rewrite + Render load balancer.
-  TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(1),
+  // Which proxies to trust, so `req.ip` (used by the login rate limiter) is the visitor's real IP.
+  // A hop count ("1": Next.js locally / ngrok) or Express subnet names
+  // ("loopback, linklocal, uniquelocal": skip every private-network hop, e.g. on Render).
+  TRUST_PROXY: z
+    .string()
+    .trim()
+    .default('1')
+    .transform((v) => (/^\d+$/.test(v) ? Number(v) : v)),
 });
 
 const parsed = EnvSchema.safeParse(process.env);
