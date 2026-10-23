@@ -67,6 +67,12 @@ npm run dev
 
 Open **http://localhost:3000** and sign in with `admin@doctortracker.dev` / `Admin@12345`.
 
+**Running it again later (after a restart).** Setup is one-time. Next time, just:
+
+1. Start **Docker Desktop** and wait for **Engine running**. MongoDB starts with it automatically, and your data is kept.
+2. Run `npm run dev` in `doctor-tracker-backend`, then `npm run dev` in `doctor-tracker-frontend` (two terminals).
+3. Open **http://localhost:3000**. <kbd>Ctrl</kbd>+<kbd>C</kbd> stops a server. The live website needs nothing: it runs on Vercel and Render.
+
 | Problem | Fix |
 | --- | --- |
 | "Invalid environment configuration" (API) | Run `cp .env.example .env`; the message names the missing variable |
