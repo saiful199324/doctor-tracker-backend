@@ -33,10 +33,55 @@ curl -b cookie.txt "https://doctor-tracker-api-4x90.onrender.com/api/doctors?sea
 
 > Hosted on Render's free plan. If the service has been idle, the first request can take up to a minute while it wakes up.
 
+## Quick start
+
+### Try the live app
+
+Open **https://doctor-tracker-frontend-two.vercel.app**, click **Fill demo credentials**, then **Sign in**. If the API has been idle (outside 08:00–23:00 Bangladesh time), the first sign-in can take up to a minute while it wakes up.
+
+### Run the whole app locally
+
+The app has two parts, and you run both. You need **[Node.js 20+](https://nodejs.org)** and **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** for MongoDB, or a free [MongoDB Atlas](https://www.mongodb.com/atlas) connection string in `MONGODB_URI`.
+
+**Terminal 1: backend API** → http://localhost:4000
+
+```bash
+git clone https://github.com/saiful199324/doctor-tracker-backend.git
+cd doctor-tracker-backend
+npm install
+cp .env.example .env          # defaults work as-is
+docker compose up -d          # MongoDB on 127.0.0.1:27017
+npm run seed                  # demo users, 60 doctors, 3,000 patients + indexes
+npm run dev
+```
+
+**Terminal 2: frontend website** → http://localhost:3000
+
+```bash
+git clone https://github.com/saiful199324/doctor-tracker-frontend.git
+cd doctor-tracker-frontend
+npm install
+cp .env.example .env.local    # already points to http://localhost:4000
+npm run dev
+```
+
+Open **http://localhost:3000** and sign in with `admin@doctortracker.dev` / `Admin@12345`.
+
+| Problem | Fix |
+| --- | --- |
+| "Invalid environment configuration" (API) | Run `cp .env.example .env`; the message names the missing variable |
+| "Invalid email or password" | Run `npm run seed` in the backend |
+| Signing in sends you back to the login page | `JWT_SECRET` must be identical in the backend `.env` and the frontend `.env.local` (the examples already match) |
+| "The API is unreachable" | Start the backend, and keep the frontend's `API_URL=http://localhost:4000` |
+| ECONNREFUSED 127.0.0.1:27017 | Start Docker Desktop, then `docker compose up -d` |
+| Port 3000 / 4000 in use | Change the backend's `PORT` (and the frontend's `API_URL` to match), or `npx next dev -p 3001` |
+| `cp` not recognised (Windows `cmd`) | Use `copy .env.example .env`, or PowerShell or Git Bash |
+
 ---
 
 ## Table of contents
 
+0. [Quick start](#quick-start)
 1. [Tech stack](#tech-stack)
 2. [Setup guide](#setup-guide)
 3. [System architecture](#system-architecture)
