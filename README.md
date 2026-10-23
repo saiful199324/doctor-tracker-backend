@@ -17,18 +17,18 @@ Every list query is served by a purpose-built compound index, verified with the 
 
 | | |
 | --- | --- |
-| **Live API** | **{{API_URL}}** (service info) · [`/api/health`]({{API_URL}}/api/health) |
-| **Live frontend** | **{{WEB_URL}}** |
+| **Live API** | **https://doctor-tracker-api-4x90.onrender.com** (service info) · [`/api/health`](https://doctor-tracker-api-4x90.onrender.com/api/health) |
+| **Live frontend** | **https://doctor-tracker-frontend-two.vercel.app** |
 | **Frontend repository** | https://github.com/saiful199324/doctor-tracker-frontend |
 | **Demo logins** | Admin `admin@doctortracker.dev` / `Admin@12345` · Staff `staff@doctortracker.dev` / `Staff@12345` |
 
 Every route except `/`, `/api`, `/api/health` and `/api/auth/*` requires a session. The easiest way to use the live API is through the frontend. To call it directly, sign in first and keep the cookie:
 
 ```bash
-curl -c cookie.txt -X POST {{API_URL}}/api/auth/login \
+curl -c cookie.txt -X POST https://doctor-tracker-api-4x90.onrender.com/api/auth/login \
   -H 'Content-Type: application/json' \
   -d '{"email":"admin@doctortracker.dev","password":"Admin@12345"}'
-curl -b cookie.txt "{{API_URL}}/api/doctors?search=card&limit=5"
+curl -b cookie.txt "https://doctor-tracker-api-4x90.onrender.com/api/doctors?search=card&limit=5"
 ```
 
 > Hosted on Render's free plan. If the service has been idle, the first request can take up to a minute while it wakes up.
