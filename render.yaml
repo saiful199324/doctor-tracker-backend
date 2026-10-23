@@ -1,0 +1,33 @@
+# Render Blueprint for the Doctor Tracker API.
+# The frontend (doctor-tracker-frontend) is deployed separately on Vercel and proxies /api/* here.
+services:
+  - type: web
+    name: doctor-tracker-api
+    runtime: node
+    plan: free
+    region: singapore
+    # --include=dev: TypeScript is a devDependency, and NODE_ENV=production would otherwise skip it
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "20"
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: TRUST_PROXY
+        value: loopback, linklocal, uniquelocal # skip Render's private-network hops
+      - key: CLIENT_IP_HEADER
+        value: cf-connecting-ip # Render is fronted by Cloudflare, which always sets this
+      # Set in the dashboard; never committed:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET # same value as the frontend's JWT_SECRET
+        sync: false
+      - key: PROXY_SECRET # same value as the frontend's PROXY_SECRET
+        sync: false
+      - key: CLIENT_ORIGIN # the frontend URL
+        sync: false

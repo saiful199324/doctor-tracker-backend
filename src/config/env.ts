@@ -19,6 +19,8 @@ const EnvSchema = z.object({
   // Header set by a trusted edge proxy that always overwrites it, e.g. "cf-connecting-ip" when the
   // host sits behind Cloudflare (Render). Only set this where clients cannot reach the API directly.
   CLIENT_IP_HEADER: z.string().trim().toLowerCase().optional(),
+  // Shared with the frontend's /api proxy: lets it forward the browser's IP in `x-client-ip`.
+  PROXY_SECRET: z.string().min(16, 'PROXY_SECRET must be at least 16 characters').optional(),
 });
 
 const parsed = EnvSchema.safeParse(process.env);

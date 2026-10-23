@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import mongoose from 'mongoose';
 import { env } from './config/env';
 import { authenticate } from './middleware/auth';
+import { resolveClientIp } from './middleware/client-ip';
 import { errorHandler, notFound } from './middleware/error';
 import authRoutes from './modules/auth/auth.routes';
 import doctorRoutes from './modules/doctors/doctor.routes';
@@ -18,19 +19,7 @@ export function createApp() {
 
   app.disable('x-powered-by');
   app.set('trust proxy', env.TRUST_PROXY);
-
-  // Behind an edge proxy that sets the visitor IP in its own header (Cloudflare on Render), use it
-  // for `req.ip` so the login rate limiter and request logs see real visitors, not proxy nodes.
-  if (env.CLIENT_IP_HEADER) {
-    const header = env.CLIENT_IP_HEADER;
-    app.use((req, _res, next) => {
-      const value = req.headers[header];
-      if (typeof value === 'string' && value) {
-        Object.defineProperty(req, 'ip', { value: value.split(',')[0].trim(), configurable: true });
-      }
-      next();
-    });
-  }
+  app.use(resolveClientIp);
 
   app.use(helmet());
   app.use(cors({ origin: env.clientOrigins, credentials: true }));
@@ -38,6 +27,19 @@ export function createApp() {
   app.use(express.json({ limit: '100kb' }));
   app.use(cookieParser());
   if (env.NODE_ENV !== 'test') app.use(morgan(env.isProduction ? 'combined' : 'dev'));
+
+  // Public service info, so the bare API URL explains itself.
+  app.get(['/', '/api'], (_req, res) => {
+    res.json({
+      success: true,
+      name: 'Doctor Tracker API',
+      status: 'ok',
+      health: '/api/health',
+      authentication: 'POST /api/auth/login sets an httpOnly session cookie; all other /api routes require it',
+      resources: ['/api/auth', '/api/doctors', '/api/patients', '/api/stats/overview'],
+      docs: 'https://github.com/saiful199324/doctor-tracker-backend#api-reference',
+    });
+  });
 
   app.get('/api/health', (_req, res) => {
     res.json({ success: true, status: 'ok', db: mongoose.connection.readyState === 1 ? 'up' : 'down' });
