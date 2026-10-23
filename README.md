@@ -15,7 +15,7 @@ Every list query is served by a purpose-built compound index, verified with the 
 
 ## Links
 
-| | |
+| What | Link |
 | --- | --- |
 | **Live API** | **https://doctor-tracker-api-4x90.onrender.com** (service info) · [`/api/health`](https://doctor-tracker-api-4x90.onrender.com/api/health) |
 | **Live frontend** | **https://doctor-tracker-frontend-two.vercel.app** |
