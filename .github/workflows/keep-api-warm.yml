@@ -4,6 +4,7 @@
 # Only during 08:00–23:00 Bangladesh time (02:00–17:00 UTC): free instance hours (750/month) are
 # shared by every free service in the Render workspace, and pinging 24/7 would use ~744 of them.
 #
+# Repository: doctor-tracker-backend.
 # Set the repository variable API_HEALTH_URL (Settings → Secrets and variables → Actions → Variables).
 name: Keep demo awake
 
